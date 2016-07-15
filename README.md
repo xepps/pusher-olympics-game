@@ -26,6 +26,9 @@ node server.js
 You will now be able to access the game at http://localhost:8000/
 
 Hit the button to start!
+
 Hit the button to run!
+
 Refresh to reset the game.
+
 Give me a BB-8 ;)
