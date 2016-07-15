@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Pusher Olympics</title>
+    <script src="/javascript/phaser.min.js"></script>
+    <link rel="stylesheet" href="/stylesheets/game.css">
+    <script src="https://js.pusher.com/3.0/pusher.min.js"></script>
+</head>
+<body>
+<div id="olympics"></div>
+<script>
+    // Phaser.Game takes 4 arguments
+    // The first 2 are the width and height of the canvas
+    // Next is the detection mode, this tells Phaser to pick the best tech for us (WebGL or Canvas)
+    // And Finally we give the game a #id of the element to render inside of
+    var background,
+        backgroundBoundary,
+        cursors,
+        gameWidth = 375,
+        playerOne,
+        playerTwo,
+        lane = [
+            300,
+            360
+        ],
+        Game = {},
+        startButton,
+        pusher = new Pusher('df00b73b40dd21cc7eef', {cluster:'mt1'}),
+        button = pusher.subscribe('button-120')
+
+    Game.RaceState = {
+        background: '',
+        backgroundBoundary: '',
+        preload: function() {
+            game.load.image('background', '/images/background.png');
+            game.load.spritesheet('bolt', '/images/sprites/bolt.png', 91, 97);
+            game.load.spritesheet('gatlin', '/images/sprites/gatlin.png', 91, 97);
+            cursors = game.input.keyboard.createCursorKeys();
+        },
+
+        create: function () {
+            background = game.add.sprite(0, 0, 'background');
+            backgroundBoundary = background.width - gameWidth;
+            playerTwo = newPlayer(lane[0], 'bolt', true);
+            playerOne = newPlayer(lane[1], 'gatlin');
+        },
+
+        update: function () {
+            playerOne.tick();
+            playerTwo.tick();
+
+            if (background.x > -backgroundBoundary) {
+                var nextPosition = background.x - playerOne.movement.speed;
+                if (nextPosition < -backgroundBoundary) {
+                    background.x = -backgroundBoundary;
+                } else {
+                    background.x -= playerOne.movement.speed;
+                }
+            } else {
+                playerOne.hasFinished = true;
+            }
+
+            playerTwo.sprite.x += (playerTwo.movement.speed - playerOne.movement.speed);
+
+            if (playerOne.hasFinished && playerOne.sprite.x < gameWidth) {
+                playerOne.sprite.animations.play('run');
+                playerOne.sprite.x += playerOne.movement.speed;
+            }
+        }
+    };
+
+    Game.StartState = {
+
+        preload: function () {
+            game.load.image('background', '/images/background.png');
+            game.load.image('start', '/images/start_on.png');
+            cursors = game.input.keyboard.createCursorKeys();
+        },
+
+        create: function () {
+            background = game.add.sprite(0, 0, 'background');
+            startButton = game.add.sprite(50, 50, 'start');
+        },
+
+        update: function () {
+            if (cursors.up.isDown) {
+                game.state.start('Race');
+            }
+        }
+    };
+
+    game = new Phaser.Game(gameWidth, 667, Phaser.AUTO, 'olympics', null);
+    game.state.add('Start', Game.StartState);
+    game.state.add('Race', Game.RaceState);
+    game.state.start('Start');
+
+    function newPlayer(lane, spriteName, ai) {
+        var sprite = game.add.sprite(20, lane, spriteName);
+        sprite.animations.add('run', [0,1,2,3,4], 10, true);
+        sprite.animations.add('jumping', [0], 10, true);
+        return {
+            ai: ai,
+            hasFinished: false,
+            track: lane,
+            sprite: sprite,
+            movement: {
+                speed: 0,
+                leftReady: true,
+                rightReady: true,
+
+                step: function () {
+                    this.speed += 0.1;
+                }
+            },
+            jump: {
+                isJumping: false,
+                fallSpeed: 0,
+                jumpHeight: 0,
+
+                start: function () {
+                    this.isJumping = true;
+                },
+
+                progress: function (me, ground) {
+                    this.jumpHeight += (18 - ++this.fallSpeed);
+                    me.y = ground - this.jumpHeight;
+
+                    if (this.jumpHeight === 0) {
+                        this.isJumping = false;
+                        this.fallSpeed = 0;
+                    }
+                }
+            },
+
+            tick: function () {
+                var self = this;
+                this.movement.speed = this.movement.speed - 0.5 >= 0
+                    ? this.movement.speed - 0.5
+                    : 0;
+
+                if (this.ai) {
+                    this.movement.speed += Math.random()/100;
+                }
+
+                button.bind('press', function(data) {
+                    self.movement.step();
+                });
+
+                if (cursors.up.isDown && !this.ai) {
+                    this.jump.start();
+                }
+
+                if (this.jump.isJumping) {
+                    this.jump.progress(this.sprite, this.track);
+                }
+
+                if (this.jump.isJumping) {
+                    this.sprite.animations.play('jumping');
+                } else if (this.movement.speed > 0) {
+                    this.sprite.animations.play('run');
+                } else {
+                    this.sprite.animations.stop();
+                }
+
+            }
+        };
+    }
+
+</script>
+</body>
+</html>

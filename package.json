@@ -1,0 +1,27 @@
+{
+  "name": "pusher-olympics",
+  "version": "1.0.0",
+  "description": "Pusher Olympics HTML 5 Game",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/xepps:pusher-olympics-game.git"
+  },
+  "keywords": [
+    "Game",
+    "HTML5"
+  ],
+  "author": "Xepps",
+  "license": "ISC",
+  "private": true,
+  "bugs": {
+    "url": "https://github.com/xepps/pusher-olympics-game/issues"
+  },
+  "homepage": "https://github.com/xepps/pusher-olympics-game#readme",
+  "dependencies": {
+    "express": "^4.13.3"
+  }
+}

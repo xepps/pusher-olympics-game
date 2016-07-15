@@ -1,0 +1,52 @@
+{"frames": {
+
+"1.png":
+{
+	"frame": {"x":0,"y":0,"w":91,"h":97},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":91,"h":97},
+	"sourceSize": {"w":91,"h":97}
+},
+"2.png":
+{
+	"frame": {"x":91,"y":0,"w":91,"h":97},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":91,"h":97},
+	"sourceSize": {"w":91,"h":97}
+},
+"3.png":
+{
+	"frame": {"x":182,"y":0,"w":91,"h":97},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":91,"h":97},
+	"sourceSize": {"w":91,"h":97}
+},
+"4.png":
+{
+	"frame": {"x":273,"y":0,"w":91,"h":97},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":91,"h":97},
+	"sourceSize": {"w":91,"h":97}
+},
+"5.png":
+{
+	"frame": {"x":364,"y":0,"w":91,"h":97},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":91,"h":97},
+	"sourceSize": {"w":91,"h":97}
+}},
+"meta": {
+	"app": "http://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "gatlin.png",
+	"format": "RGBA8888",
+	"size": {"w":455,"h":97},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:22f0727d00ece27b3f2dbd0c74b09660:30131a45289bb9646b2249399207135a:680ac2af3aec6112d08850b3d05db7ab$"
+}
+}
