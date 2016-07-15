@@ -25,4 +25,7 @@ node server.js
 
 You will now be able to access the game at http://localhost:8000/
 
-All assets are stored in the **public** directory.
+Hit the button to start!
+Hit the button to run!
+Refresh to reset the game.
+Give me a BB-8 ;)
