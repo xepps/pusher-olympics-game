@@ -9,13 +9,8 @@
 <body>
 <div id="olympics"></div>
 <script>
-    // Phaser.Game takes 4 arguments
-    // The first 2 are the width and height of the canvas
-    // Next is the detection mode, this tells Phaser to pick the best tech for us (WebGL or Canvas)
-    // And Finally we give the game a #id of the element to render inside of
     var background,
         backgroundBoundary,
-        cursors,
         gameWidth = 375,
         playerOne,
         playerTwo,
@@ -35,7 +30,6 @@
             game.load.image('background', '/images/background.png');
             game.load.spritesheet('bolt', '/images/sprites/bolt.png', 91, 97);
             game.load.spritesheet('gatlin', '/images/sprites/gatlin.png', 91, 97);
-            cursors = game.input.keyboard.createCursorKeys();
         },
 
         create: function () {
@@ -71,10 +65,11 @@
 
     Game.StartState = {
 
+        started: false,
+
         preload: function () {
             game.load.image('background', '/images/background.png');
             game.load.image('start', '/images/start_on.png');
-            cursors = game.input.keyboard.createCursorKeys();
         },
 
         create: function () {
@@ -83,9 +78,13 @@
         },
 
         update: function () {
-            if (cursors.up.isDown) {
-                game.state.start('Race');
-            }
+            var self = this;
+            button.bind('press', function(data) {
+                if (!self.started) {
+                    self.started = true;
+                    game.state.start('Race');
+                }
+            });
         }
     };
 
@@ -97,7 +96,6 @@
     function newPlayer(lane, spriteName, ai) {
         var sprite = game.add.sprite(20, lane, spriteName);
         sprite.animations.add('run', [0,1,2,3,4], 10, true);
-        sprite.animations.add('jumping', [0], 10, true);
         return {
             ai: ai,
             hasFinished: false,
@@ -105,63 +103,35 @@
             sprite: sprite,
             movement: {
                 speed: 0,
-                leftReady: true,
-                rightReady: true,
 
                 step: function () {
                     this.speed += 0.1;
                 }
             },
-            jump: {
-                isJumping: false,
-                fallSpeed: 0,
-                jumpHeight: 0,
-
-                start: function () {
-                    this.isJumping = true;
-                },
-
-                progress: function (me, ground) {
-                    this.jumpHeight += (18 - ++this.fallSpeed);
-                    me.y = ground - this.jumpHeight;
-
-                    if (this.jumpHeight === 0) {
-                        this.isJumping = false;
-                        this.fallSpeed = 0;
-                    }
-                }
-            },
 
             tick: function () {
-                var self = this;
-                this.movement.speed = this.movement.speed - 0.5 >= 0
-                    ? this.movement.speed - 0.5
+                var self = this,
+                    drag = Math.max(this.movement.speed/10, 0.1);
+
+                this.movement.speed = this.movement.speed - drag >= 0
+                    ? this.movement.speed - drag
                     : 0;
 
                 if (this.ai) {
-                    this.movement.speed += Math.random()/100;
+                    this.movement.speed += Math.random()*2;
                 }
 
                 button.bind('press', function(data) {
-                    self.movement.step();
+                    if (!self.ai) {
+                        self.movement.step();
+                    }
                 });
 
-                if (cursors.up.isDown && !this.ai) {
-                    this.jump.start();
-                }
-
-                if (this.jump.isJumping) {
-                    this.jump.progress(this.sprite, this.track);
-                }
-
-                if (this.jump.isJumping) {
-                    this.sprite.animations.play('jumping');
-                } else if (this.movement.speed > 0) {
+                if (this.movement.speed > 0) {
                     this.sprite.animations.play('run');
                 } else {
                     this.sprite.animations.stop();
                 }
-
             }
         };
     }
